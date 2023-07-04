@@ -53,7 +53,18 @@ def calculate_profit(drink_of_choice):
 def make_coffee(drink_of_choice):
     for ingredient in drink_of_choice["ingredients"]:
         resources[ingredient] -= drink_of_choice["ingredients"][ingredient]
-            
+
+
+def process_coins():
+    quarters_amount = int(input("How many quarters? ")) * 0.25
+    dimes_amount = int(input("How many dimes? ")) * 0.1
+    nickles_amount = int(input("How many nickles? ")) * 0.05
+    pennies_amount = int(input("How many pennies? ")) * 0.01
+
+    total = quarters_amount + dimes_amount + nickles_amount + pennies_amount
+
+    return total
+
 
 is_coffee_machine_on = True
 
@@ -67,7 +78,14 @@ while is_coffee_machine_on:
     elif choice.lower() in MENU:
         print(choice)
         if sufficient_resources(MENU[choice.lower()]):
-            make_coffee(MENU[choice.lower()])
-            calculate_profit(MENU[choice.lower()])
+            payment = process_coins()
+            if payment >= MENU[choice.lower()]["cost"]:
+                change = round(payment - MENU[choice.lower()]["cost"],2)
+                print("Here is your change: $" + str(change))
+                make_coffee(MENU[choice.lower()])
+                calculate_profit(MENU[choice.lower()])
+                print('Here is your ' + choice.lower() + "! Enjoy!")
+            else:
+                print("Sorry that's not enough money. Money refunded.")
 
 
