@@ -39,31 +39,21 @@ def printReport():
     print("Coffee: " + str(resources["coffee"]) + "g")
     print("Money: " + "$" + str(total_profit))
 
-def are_resources_sufficient(drink_of_choice):
+def sufficient_resources(drink_of_choice):
+    for ingredient in drink_of_choice["ingredients"]:
+        if resources[ingredient] < drink_of_choice["ingredients"][ingredient]:
+            print("Sorry there is not enough " + ingredient + ".")
+            return False    
+    return True
+
+def calculate_profit(drink_of_choice):
     global total_profit
-    if drink_of_choice == "espresso":
-        if resources["water"] >= MENU["espresso"]["ingredients"]["water"] and resources["coffee"] >= MENU["espresso"]["ingredients"]["coffee"]:
+    total_profit += drink_of_choice["cost"]
+
+def make_coffee(drink_of_choice):
+    for ingredient in drink_of_choice["ingredients"]:
+        resources[ingredient] -= drink_of_choice["ingredients"][ingredient]
             
-            resources["water"] -= MENU["espresso"]["ingredients"]["water"]
-            resources["coffee"] -= MENU["espresso"]["ingredients"]["coffee"]
-            total_profit += MENU["espresso"]["cost"]
-    
-    elif drink_of_choice == "latte":
-        if (resources["water"] >= MENU["latte"]["ingredients"]["water"] and resources["milk"] >= MENU["latte"]["ingredients"]["milk"] and
-            resources["coffee"] >= MENU["latte"]["ingredients"]["coffee"]):
-            
-            resources["water"] -= MENU["latte"]["ingredients"]["water"]
-            resources["coffee"] -= MENU["latte"]["ingredients"]["coffee"]
-            resources["milk"] -= MENU["latte"]["ingredients"]["milk"]
-            total_profit += MENU["latte"]["cost"]
-    else:
-        if (resources["water"] >= MENU["cappuccino"]["ingredients"]["water"] and resources["milk"] >= MENU["cappuccino"]["ingredients"]["milk"] and
-            resources["coffee"] >= MENU["cappuccino"]["ingredients"]["coffee"]):
-            
-            resources["water"] -= MENU["cappuccino"]["ingredients"]["water"]
-            resources["coffee"] -= MENU["cappuccino"]["ingredients"]["coffee"]
-            resources["milk"] -= MENU["cappuccino"]["ingredients"]["milk"]
-            total_profit += MENU["cappuccino"]["cost"]
 
 is_coffee_machine_on = True
 
@@ -76,6 +66,8 @@ while is_coffee_machine_on:
         printReport()
     elif choice.lower() in MENU:
         print(choice)
-        are_resources_sufficient(choice.lower())
+        if sufficient_resources(MENU[choice.lower()]):
+            make_coffee(MENU[choice.lower()])
+            calculate_profit(MENU[choice.lower()])
 
 
