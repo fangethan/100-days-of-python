@@ -76,7 +76,6 @@ while is_coffee_machine_on:
     elif choice == "report":
         printReport()
     elif choice.lower() in MENU:
-        print(choice)
         if sufficient_resources(MENU[choice.lower()]):
             payment = process_coins()
             if payment >= MENU[choice.lower()]["cost"]:
