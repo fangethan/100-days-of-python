@@ -5,3 +5,9 @@ class QuizBrain:
 
     def next_question(self):
         answer = input(f"Q.{self.question_number+1}: {self.question_list[self.question_number].text} (True/False)? ")
+        self.question_number += 1
+
+    def still_has_questions(self):
+        if self.question_number != len(self.question_list):
+            return True
+        return False
