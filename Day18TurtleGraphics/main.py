@@ -7,6 +7,8 @@ tim = t.Turtle()
 tim.shape("turtle")
 tim.color("red")
 colours = ["CornflowerBlue", "DarkOrchid", "IndianRed", "DeepSkyBlue", "LightSeaGreen", "wheat", "SlateGray", "SeaGreen"]
+t.colormode(255)
+
 # tim.forward(100)
 # tim.backward(200)
 # tim.right(90)
@@ -41,10 +43,9 @@ colours = ["CornflowerBlue", "DarkOrchid", "IndianRed", "DeepSkyBlue", "LightSea
 #     draw_shape(shapes_sides)
 
 ######## Challenge 4 - Generate a random walk ############
-directions = [0, 90, 180, 270]
-tim.pensize(15)
+# directions = [0, 90, 180, 270]
+# tim.pensize(15)
 tim.speed("fastest")
-t.colormode(255)
 
 def random_colour():
     r = random.randint(0, 255)
@@ -53,9 +54,17 @@ def random_colour():
     colour = (r, g, b)
     return colour
 
-for _ in range(200):
-    # tim.color(random.choice(colours))
-    tim.color(random_colour())
-    tim.forward(30)
-    tim.setheading(random.choice(directions))
+# for _ in range(200):
+#     tim.color(random.choice(colours))
+#     tim.color(random_colour())
+#     tim.forward(30)
+#     tim.setheading(random.choice(directions))
 
+######## Challenge 5 - Generate a spiral graph ############
+def draw_spirograph(size_of_gap):
+    for _ in range(int(360 / size_of_gap)):
+        tim.color(random_colour())
+        tim.circle(100)
+        tim.setheading(tim.heading() + size_of_gap)
+
+draw_spirograph(5)
