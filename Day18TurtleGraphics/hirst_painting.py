@@ -5,7 +5,6 @@ import random
 tim = t.Turtle()
 tim.shape("turtle")
 t.colormode(255)
-tim.pensize(15)
 tim.speed("fastest")
 
 colors = colorgram.extract('image.jpeg', 30)
