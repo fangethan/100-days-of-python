@@ -6,7 +6,16 @@ import random
 tim = t.Turtle()
 tim.shape("turtle")
 tim.color("red")
-colours = ["CornflowerBlue", "DarkOrchid", "IndianRed", "DeepSkyBlue", "LightSeaGreen", "wheat", "SlateGray", "SeaGreen"]
+colours = [
+    "CornflowerBlue",
+    "DarkOrchid",
+    "IndianRed",
+    "DeepSkyBlue",
+    "LightSeaGreen",
+    "wheat",
+    "SlateGray",
+    "SeaGreen",
+]
 t.colormode(255)
 
 # tim.forward(100)
@@ -47,12 +56,14 @@ t.colormode(255)
 # tim.pensize(15)
 tim.speed("fastest")
 
+
 def random_colour():
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
     colour = (r, g, b)
     return colour
+
 
 # for _ in range(200):
 #     tim.color(random.choice(colours))
@@ -66,5 +77,6 @@ def draw_spirograph(size_of_gap):
         tim.color(random_colour())
         tim.circle(100)
         tim.setheading(tim.heading() + size_of_gap)
+
 
 draw_spirograph(5)

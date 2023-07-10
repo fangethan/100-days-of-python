@@ -5,7 +5,9 @@ class QuizBrain:
         self.score = 0
 
     def next_question(self):
-        answer = input(f"Q.{self.question_number+1}: {self.question_list[self.question_number].text} (True/False)? ")
+        answer = input(
+            f"Q.{self.question_number+1}: {self.question_list[self.question_number].text} (True/False)? "
+        )
         self.check_answer(answer)
         self.question_number += 1
 
@@ -15,7 +17,10 @@ class QuizBrain:
         return False
 
     def check_answer(self, user_answer):
-        if user_answer.lower() == self.question_list[self.question_number].answer.lower():
+        if (
+            user_answer.lower()
+            == self.question_list[self.question_number].answer.lower()
+        ):
             print("You got it right!")
             self.score += 1
             print(f"Your score is: {self.score}/{self.question_number+1}")
@@ -23,6 +28,3 @@ class QuizBrain:
             print("You got it wrong")
             print(f"Answer is: {self.question_list[self.question_number].answer}")
             print(f"Your score is: {self.score}/{self.question_number+1}")
-
-
-

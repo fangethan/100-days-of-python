@@ -1,22 +1,22 @@
 import colorgram
 import turtle as t
-import random 
+import random
 
 tim = t.Turtle()
 tim.shape("turtle")
 t.colormode(255)
 tim.speed("fastest")
 
-colors = colorgram.extract('image.jpeg', 30)
+colors = colorgram.extract("image.jpeg", 30)
 
-color_list = [] 
+color_list = []
 
 for color in colors:
-    r = color.rgb.r 
-    g = color.rgb.g  
-    b = color.rgb.b  
-    extracted_color = (r, g, b)  
-    color_list.append(extracted_color)  
+    r = color.rgb.r
+    g = color.rgb.g
+    b = color.rgb.b
+    extracted_color = (r, g, b)
+    color_list.append(extracted_color)
 
 tim.penup()
 tim.hideturtle()

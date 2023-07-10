@@ -1,27 +1,10 @@
 MENU = {
-    "espresso": {
-        "ingredients": {
-            "water": 50,
-            "coffee": 18,
-        },
-        "cost": 1.5,
-    },
-    "latte": {
-        "ingredients": {
-            "water": 200,
-            "milk": 150,
-            "coffee": 24,
-        },
-        "cost": 2.5,
-    },
+    "espresso": {"ingredients": {"water": 50, "coffee": 18,}, "cost": 1.5,},
+    "latte": {"ingredients": {"water": 200, "milk": 150, "coffee": 24,}, "cost": 2.5,},
     "cappuccino": {
-        "ingredients": {
-            "water": 250,
-            "milk": 100,
-            "coffee": 24,
-        },
+        "ingredients": {"water": 250, "milk": 100, "coffee": 24,},
         "cost": 3.0,
-    }
+    },
 }
 
 resources = {
@@ -32,6 +15,7 @@ resources = {
 
 total_profit = 0
 
+
 def printReport():
     print("Resources remaining:")
     print("Water: " + str(resources["water"]) + "ml")
@@ -39,16 +23,19 @@ def printReport():
     print("Coffee: " + str(resources["coffee"]) + "g")
     print("Money: " + "$" + str(total_profit))
 
+
 def sufficient_resources(drink_of_choice):
     for ingredient in drink_of_choice["ingredients"]:
         if resources[ingredient] < drink_of_choice["ingredients"][ingredient]:
             print("Sorry there is not enough " + ingredient + ".")
-            return False    
+            return False
     return True
+
 
 def calculate_profit(drink_of_choice):
     global total_profit
     total_profit += drink_of_choice["cost"]
+
 
 def make_coffee(drink_of_choice):
     for ingredient in drink_of_choice["ingredients"]:
@@ -79,12 +66,10 @@ while is_coffee_machine_on:
         if sufficient_resources(MENU[choice.lower()]):
             payment = process_coins()
             if payment >= MENU[choice.lower()]["cost"]:
-                change = round(payment - MENU[choice.lower()]["cost"],2)
+                change = round(payment - MENU[choice.lower()]["cost"], 2)
                 print("Here is your change: $" + str(change))
                 make_coffee(MENU[choice.lower()])
                 calculate_profit(MENU[choice.lower()])
-                print('Here is your ' + choice.lower() + "! Enjoy!")
+                print("Here is your " + choice.lower() + "! Enjoy!")
             else:
                 print("Sorry that's not enough money. Money refunded.")
-
-

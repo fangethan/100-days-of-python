@@ -21,4 +21,3 @@ while is_coffee_machine_on:
         if coffee_maker.is_resource_sufficient(menu.find_drink(choice.lower())):
             if money_machine.make_payment(menu.find_drink(choice.lower()).cost):
                 coffee_maker.make_coffee(menu.find_drink(choice.lower()))
-        
