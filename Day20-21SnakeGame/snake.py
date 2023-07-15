@@ -17,7 +17,7 @@ class Snake:
     def create_snake(self):
         for position in STARTING_POSITIONS:
             self.add_segment(position)
-    
+
     def extend(self):
         self.add_segment(self.segments[-1].position())
 
