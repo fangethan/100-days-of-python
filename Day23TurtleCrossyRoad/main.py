@@ -27,3 +27,6 @@ while game_is_on:
         if car.distance(player) < 20:
             print("Game over")
             game_is_on = False
+
+    if player.is_at_finish_line():
+        player.go_to_starting_position()
