@@ -3,6 +3,7 @@ import requests
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from client_id_secret import client_id, client_secret
 
 date = input(
     "Which year do you want to travel to? Type the date in this format YYYY--MM-DD:"
@@ -17,9 +18,6 @@ soup = BeautifulSoup(content, "html.parser")
 soup_names_spans = soup.select("li ul li h3")
 song_names = [song.getText().strip() for song in soup_names_spans]
 print(song_names)
-
-client_id = "82f065b1202148fc883de03e5d2e155b"
-client_secret = "b1224c4776864c2581e70814973abe72"
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
