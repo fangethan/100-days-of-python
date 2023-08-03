@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html", name="Katie")
+    return render_template("index.html")
 
 
 @app.route("/guess/<name>")
@@ -25,7 +25,7 @@ def guess(name):
 
 
 @app.route("/blog")
-def blog():
+def get_blog():
     blog_url = "https://api.npoint.io/c790b4d5cab58020d391"
     response = requests.get(blog_url)
     all_posts = response.json()

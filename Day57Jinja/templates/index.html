@@ -6,8 +6,12 @@
     <title>Guess</title>
 </head>
 <body>
-    <h1>Hey {{name}} </h1>
+    <!-- <h1>Hey {{name}} </h1>
     <h2>I think you are a female</h2>
-    <h3>and maybe you are 32 years old</h3>
+    <h3>and maybe you are 32 years old</h3> -->
+
+    <a href="{{ url_for('get_blog') }}">Go to blog</a> <br>
+    <a href="{{ url_for('guess', name='ethan') }}">Go to guess</a>
+
 </body>
 </html>
