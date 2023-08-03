@@ -15,7 +15,7 @@ def home():
     )
 
 
-@app.route("/url/<int: number>")
+@app.route("/url/<int:number>")
 def guess_number(number):
     if number > random_number:
         return (
