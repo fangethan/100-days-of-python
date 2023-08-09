@@ -28,7 +28,7 @@ if price_as_float < 100:
         connection.sendmail(
             from_addr="example.com",
             to_addrs="ethan.fang@gmail.com",
-            msg=f"Subject:Amazon Price Alert!\n\n{message}\n{URL}".encode("utf-8")
+            msg=f"Subject:Amazon Price Alert!\n\n{message}\n{URL}".encode("utf-8"),
         )
 
 print(price_as_float)
