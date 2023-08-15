@@ -26,15 +26,19 @@ Bootstrap5(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///new-books-collection.db"
 db.init_app(app)
 
+API_KEY = "61cb12331bbc6d9ed070b0b6f57be6f7"
+SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
+IMAGE_URL = "https://image.tmdb.org/t/p/w500"
+
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(250), nullable=False)
-    rating = db.Column(db.Float, nullable=False)
-    ranking = db.Column(db.Integer, nullable=False)
-    review = db.Column(db.String(250), nullable=False)
+    rating = db.Column(db.Float, nullable=True)
+    ranking = db.Column(db.Integer, nullable=True)
+    review = db.Column(db.String(250), nullable=True)
     image_url = db.Column(db.String(250), nullable=False)
 
 
@@ -48,6 +52,11 @@ class RateMovieForm(FlaskForm):
     submit = SubmitField("Done")
 
 
+class AddMovieForm(FlaskForm):
+    title = StringField("Movie Title", validators=[DataRequired()])
+    submit = SubmitField("Add Field")
+
+
 @app.route("/")
 def home():
     result = db.session.execute(db.select(Movie).order_by(Movie.ranking))
@@ -57,20 +66,16 @@ def home():
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
-    if request.method == "POST":
-        new_movie = Movie(
-            title="Phone Booth",
-            year=2002,
-            description="Publicist Stuart Shepard finds himself trapped in a phone booth, pinned down by an extortionist's sniper rifle. Unable to leave or receive outside help, Stuart's negotiation with the caller leads to a jaw-dropping climax.",
-            rating=7.3,
-            ranking=10,
-            review="My favourite character was the caller.",
-            image_url="https://image.tmdb.org/t/p/w500/tjrX2oWRCM3Tvarz38zlZM7Uc10.jpg",
+    form = AddMovieForm()
+    if form.validate_on_submit():
+        movie_title = form.title.data
+        response = requests.get(
+            SEARCH_URL, params={"api_key": API_KEY, "query": movie_title}
         )
-        db.session.add(new_movie)
-        db.session.commit()
-        return redirect(url_for("home"))
-    return render_template("add.html")
+        data = response.json()["results"]
+        return render_template("select.html", options=data)
+
+    return render_template("add.html", form=form)
 
 
 @app.route("/edit", methods=["GET", "POST"])
@@ -95,6 +100,24 @@ def delete():
     db.session.delete(movie_to_be_deleted)
     db.session.commit()
     return redirect(url_for("home"))
+
+
+@app.route("/select")
+def select():
+    movie_id = request.args.get("id")
+    data = requests.get(
+        f"https://api.themoviedb.org/3/movie/{movie_id}",
+        params={"api_key": API_KEY, "language": "en-US"},
+    ).json()
+    new_movie = Movie(
+        title=data["title"],
+        year=data["release_date"].split("-")[0],
+        image_url=f"{IMAGE_URL}{data['poster_path']}",
+        description=data["overview"],
+    )
+    db.session.add(new_movie)
+    db.session.commit()
+    return redirect(url_for("edit", id=new_movie.id))
 
 
 if __name__ == "__main__":
