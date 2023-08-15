@@ -42,6 +42,12 @@ with app.app_context():
     db.create_all()
 
 
+class RateMovieForm(FlaskForm):
+    rating = StringField("Your Rating Out of 10 e.g. 7.5")
+    review = StringField("Your Review")
+    submit = SubmitField("Done")
+
+
 @app.route("/")
 def home():
     result = db.session.execute(db.select(Movie).order_by(Movie.ranking))
@@ -65,6 +71,21 @@ def add():
         db.session.commit()
         return redirect(url_for("home"))
     return render_template("add.html")
+
+
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
+    form = RateMovieForm()
+    movie_id = request.args.get("id")
+    movie_selected = db.get_or_404(Movie, movie_id)
+
+    if form.validate_on_submit():
+        movie_selected.rating = float(form.rating.data)
+        movie_selected.review = form.review.data
+        db.session.commit()
+        return redirect(url_for("home"))
+
+    return render_template("edit.html", movie=movie_selected, form=form)
 
 
 if __name__ == "__main__":
