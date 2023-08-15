@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from constants import API_KEY, SEARCH_URL, IMAGE_URL
 import requests
 
 """
@@ -25,10 +26,6 @@ Bootstrap5(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///new-books-collection.db"
 db.init_app(app)
-
-API_KEY = "61cb12331bbc6d9ed070b0b6f57be6f7"
-SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
-IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
 
 class Movie(db.Model):
