@@ -18,15 +18,53 @@ pip3 install -r requirements.txt
 
 This will install the packages from requirements.txt for this project.
 """
-
+db = SQLAlchemy()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "8BYkEfBA6O6donzWlSihBXox7C0sKR6b"
 Bootstrap5(app)
 
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///new-books-collection.db"
+db.init_app(app)
+
+
+class Movie(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(250), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    ranking = db.Column(db.Integer, nullable=False)
+    review = db.Column(db.String(250), nullable=False)
+    image_url = db.Column(db.String(250), nullable=False)
+
+
+with app.app_context():
+    db.create_all()
+
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    result = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+    all_movies = result.scalars()
+    return render_template("index.html", movies=all_movies)
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    if request.method == "POST":
+        new_movie = Movie(
+            title="Phone Booth",
+            year=2002,
+            description="Publicist Stuart Shepard finds himself trapped in a phone booth, pinned down by an extortionist's sniper rifle. Unable to leave or receive outside help, Stuart's negotiation with the caller leads to a jaw-dropping climax.",
+            rating=7.3,
+            ranking=10,
+            review="My favourite character was the caller.",
+            image_url="https://image.tmdb.org/t/p/w500/tjrX2oWRCM3Tvarz38zlZM7Uc10.jpg",
+        )
+        db.session.add(new_movie)
+        db.session.commit()
+        return redirect(url_for("home"))
+    return render_template("add.html")
 
 
 if __name__ == "__main__":
