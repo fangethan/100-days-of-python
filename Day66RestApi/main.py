@@ -84,14 +84,17 @@ def search_cafe_location():
     )
 
 
-## HTTP GET - Read Record
+@app.route("/add", methods=["GET", "POST"])
+def add():
+    # if request.method == "POST":
+    cafe_name = request.form.get("name")
+    map_url = request.form.get("map_url")
+    print("cafe_name, map_url")
+    print(cafe_name, map_url)
+    return jsonify(success="Successfully added the new cafe"), 200
 
-## HTTP POST - Create Record
 
-## HTTP PUT/PATCH - Update Record
-
-## HTTP DELETE - Delete Record
-
+# return render_template("add_cafe.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
