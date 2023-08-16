@@ -38,7 +38,10 @@ class Cafe(db.Model):
     coffee_price = db.Column(db.String(250), nullable=True)
 
     def to_dict(self):
-        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+        return {
+            column.name: getattr(self, column.name) for column in self.__table__.columns
+        }
+
 
 with app.app_context():
     db.create_all()
@@ -47,6 +50,7 @@ with app.app_context():
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/random")
 def get_random_cafe():
@@ -63,6 +67,21 @@ def get_all_cafes():
     all_cafes = result.scalars().all()
 
     return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
+
+
+@app.route("/search")
+def search_cafe_location():
+    location = request.args.get("loc")
+    result = db.session.execute(db.select(Cafe).where(Cafe.location == location))
+
+    all_cafes_same_location = result.scalars().all()
+    if all_cafes_same_location:
+        return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes_same_location])
+
+    return (
+        jsonify(error={"Not Found": "Sorry, we don't have a cafe at that location."}),
+        404,
+    )
 
 
 ## HTTP GET - Read Record
