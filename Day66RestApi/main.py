@@ -37,7 +37,7 @@ class Cafe(db.Model):
     coffee_price = db.Column(db.String(250), nullable=True)
 
 
-with app.create_contect():
+with app.app_context():
     db.create_all()
 
 
