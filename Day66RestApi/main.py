@@ -86,15 +86,22 @@ def search_cafe_location():
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
-    # if request.method == "POST":
-    cafe_name = request.form.get("name")
-    map_url = request.form.get("map_url")
-    print("cafe_name, map_url")
-    print(cafe_name, map_url)
-    return jsonify(success="Successfully added the new cafe"), 200
+    new_cafe = Cafe(
+        name=request.form.get("name"),
+        map_url=request.form.get("map_url"),
+        img_url=request.form.get("img_url"),
+        location=request.form.get("loc"),
+        has_sockets=bool(request.form.get("sockets")),
+        has_toilet=bool(request.form.get("toilet")),
+        has_wifi=bool(request.form.get("wifi")),
+        can_take_calls=bool(request.form.get("calls")),
+        seats=request.form.get("seats"),
+        coffee_price=request.form.get("coffee_price"),
+    )
+    db.session.add(new_cafe)
+    db.session.commit()
+    return jsonify(response={"success": "Successfully added the new cafe."})
 
-
-# return render_template("add_cafe.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
