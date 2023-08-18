@@ -70,7 +70,6 @@ def show_post(post_id):
         return "Error, nothing found"
 
 
-# TODO: add_new_post() to create a new blog post
 @app.route("/add", methods=["GET", "POST"])
 def add_new_post():
     form = AddBlogPostForm()
@@ -80,7 +79,7 @@ def add_new_post():
             for (item, value) in form._fields.items()
             if item not in ["submit", "csrf_token"]
         }
-        current_date = datetime.now().strftime('%B %d, %Y')
+        current_date = datetime.now().strftime("%B %d, %Y")
         new_post = BlogPost(date=current_date, **all_items)
         print(new_post.date)
         db.session.add(new_post)
@@ -91,6 +90,27 @@ def add_new_post():
 
 
 # TODO: edit_post() to change an existing blog post
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    blog_post = db.get_or_404(BlogPost, post_id)
+    form = AddBlogPostForm(
+        title=blog_post.title,
+        subtitle=blog_post.subtitle,
+        img_url=blog_post.img_url,
+        author=blog_post.author,
+        body=blog_post.body,
+    )
+    if form.validate_on_submit():
+        blog_post.title = form.title.data
+        blog_post.subtitle = form.subtitle.data
+        blog_post.img_url = form.img_url.data
+        blog_post.author = form.author.data
+        blog_post.body = form.body.data
+        db.session.commit()
+        return redirect(url_for("show_post", post_id=blog_post.id))
+
+    return render_template("make-post.html", form=form, is_edit=True)
+
 
 # TODO: delete_post() to remove a blog post from the database
 
