@@ -5,7 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
-from datetime import date
+from datetime import datetime
 
 """
 Make sure the required packages are installed: 
@@ -80,8 +80,9 @@ def add_new_post():
             for (item, value) in form._fields.items()
             if item not in ["submit", "csrf_token"]
         }
-        current_date = date.today()
+        current_date = datetime.now().strftime('%B %d, %Y')
         new_post = BlogPost(date=current_date, **all_items)
+        print(new_post.date)
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
