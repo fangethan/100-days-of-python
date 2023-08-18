@@ -89,7 +89,6 @@ def add_new_post():
     return render_template("make-post.html", form=form)
 
 
-# TODO: edit_post() to change an existing blog post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     blog_post = db.get_or_404(BlogPost, post_id)
@@ -112,9 +111,15 @@ def edit_post(post_id):
     return render_template("make-post.html", form=form, is_edit=True)
 
 
-# TODO: delete_post() to remove a blog post from the database
+@app.route("/delete/<int:post_id>")
+def delete_post(post_id):
+    blog_post = db.get_or_404(BlogPost, post_id)
+    db.session.delete(blog_post)
+    db.session.commit()
 
-# Below is the code from previous lessons. No changes needed.
+    return redirect(url_for("get_all_posts"))
+
+
 @app.route("/about")
 def about():
     return render_template("about.html")
