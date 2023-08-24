@@ -58,6 +58,13 @@ def register():
         hash_and_salted_password = generate_password_hash(
             request.form.get("password"), method="pbkdf2:sha256", salt_length=8
         )
+        result = db.session.execute(
+            db.select(User).where(User.email == request.form.get("email"))
+        )
+        if result:
+            flash("That email already exist, please try again.")
+            return redirect(url_for("register"))
+
         new_user = User(
             email=request.form.get("email"),
             name=request.form.get("name"),
@@ -82,9 +89,15 @@ def login():
         result = db.session.execute(db.select(User).where(User.email == email))
         user = result.scalar()
 
-        if check_password_hash(user.password, password):
-            login_user(user)
-            return redirect(url_for("secrets"))
+        if not user:
+            flash("That email does not exist, please try again.")
+            return redirect(url_for("login"))
+        elif not check_password_hash(user.password, password):
+            flash("Password incorrect, please try again.")
+            return redirect(url_for("login"))
+
+        login_user(user)
+        return redirect(url_for("secrets"))
 
     return render_template("login.html")
 
@@ -98,8 +111,7 @@ def secrets():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('home'))
-
+    return redirect(url_for("home"))
 
 
 @app.route("/download")
