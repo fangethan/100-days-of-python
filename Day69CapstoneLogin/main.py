@@ -34,6 +34,16 @@ db.init_app(app)
 
 
 # CONFIGURE TABLES
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
+    name = db.Column(db.String(250), nullable=False)
+
+    posts = relationship("BlogPost", back_populates="author")
+
+
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
@@ -41,16 +51,10 @@ class BlogPost(db.Model):
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
 
-
-class User(db.Model, UserMixin):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(250), nullable=False)
-    password = db.Column(db.String(250), nullable=False)
-    name = db.Column(db.String(250), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    author = db.relationship("User", back_populates="posts")
 
 
 with app.app_context():
@@ -78,7 +82,8 @@ def register():
         result = db.session.execute(
             db.select(User).where(User.email == form.email.data)
         )
-        if result:
+
+        if result.scalars().all():
             flash("That email already exist, please try again.")
             return redirect(url_for("login"))
 
@@ -91,6 +96,7 @@ def register():
         db.session.commit()
 
         login_user(new_user)
+
         return redirect(url_for("get_all_posts"))
 
     return render_template(
@@ -130,7 +136,6 @@ def logout():
 
 
 @app.route("/")
-@admin_only
 def get_all_posts():
     result = db.session.execute(db.select(BlogPost))
     posts = result.scalars().all()
