@@ -9,7 +9,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 
-from forms import CreatePostForm, RegisterForm, LoginForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
 
 app = Flask(__name__)
@@ -17,7 +17,6 @@ app.config["SECRET_KEY"] = "8BYkEfBA6O6donzWlSihBXox7C0sKR6b"
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
-# TODO: Configure Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -27,13 +26,11 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-# CONNECT TO DB
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///posts.db"
 db = SQLAlchemy()
 db.init_app(app)
 
 
-# CONFIGURE TABLES
 class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +39,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(250), nullable=False)
 
     posts = relationship("BlogPost", back_populates="author")
+    comments = relationship("Comment", back_populates="comment_author")
 
 
 class BlogPost(db.Model):
@@ -55,6 +53,19 @@ class BlogPost(db.Model):
 
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     author = db.relationship("User", back_populates="posts")
+    comments = relationship("Comment", back_populates="parent_post")
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    comment_author = db.relationship("User", back_populates="comments")
+    text = db.Column(db.String(250), nullable=False)
+
+    post_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
+    parent_post = relationship("BlogPost", back_populates="comments")
+    text = db.Column(db.Text, nullable=False)
 
 
 with app.app_context():
@@ -145,12 +156,12 @@ def get_all_posts():
     )
 
 
-# TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
+    form = CommentForm()
     requested_post = db.get_or_404(BlogPost, post_id)
     return render_template(
-        "post.html", post=requested_post, logged_in=current_user.is_authenticated,
+        "post.html", post=requested_post, form=form, logged_in=current_user.is_authenticated,
     )
 
 
