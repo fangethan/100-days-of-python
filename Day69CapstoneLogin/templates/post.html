@@ -40,6 +40,24 @@
         {{ ckeditor.load() }}
         {{ ckeditor.config(name='comment_text') }}
         {{ render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+        <div class="comment">
+          <ul class="commentList">
+            <!-- Show all comments -->
+            {% for comment in post.comments: %}
+            <li>
+              <div class="commenterImage">
+                <img
+                  src="{{ comment.comment_author.email | gravatar }}"
+                />
+              </div>
+              <div class="commentText">
+                {{comment.text|safe}}
+                <span class="sub-text">{{comment.comment_author.name}}</span>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>

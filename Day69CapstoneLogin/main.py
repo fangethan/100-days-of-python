@@ -152,7 +152,9 @@ def get_all_posts():
     posts = result.scalars().all()
 
     return render_template(
-        "index.html", all_posts=posts, logged_in=current_user.is_authenticated,
+        "index.html",
+        all_posts=posts,
+        logged_in=current_user.is_authenticated,
     )
 
 
@@ -160,8 +162,25 @@ def get_all_posts():
 def show_post(post_id):
     form = CommentForm()
     requested_post = db.get_or_404(BlogPost, post_id)
+
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for("login"))
+
+        new_comment = Comment(
+            text=form.comments.data,
+            comment_author=current_user,
+            parent_post=requested_post,
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+
     return render_template(
-        "post.html", post=requested_post, form=form, logged_in=current_user.is_authenticated,
+        "post.html",
+        post=requested_post,
+        form=form,
+        logged_in=current_user.is_authenticated,
     )
 
 
